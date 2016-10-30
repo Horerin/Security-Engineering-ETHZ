@@ -1,0 +1,48 @@
+Window LoginWindow {
+    
+
+    String text := ['Log In']
+
+    Label Name_L {
+        String text := ['Name']
+    }
+    TextField Name_TF {
+        String text :=  [null] 
+    }
+    Label Surname_L{
+        String text := ['Surname']
+    }
+    TextField Surname_TF{
+        String text := [null]
+    }
+    Label Password_L {
+        String text := ['Password']
+    }
+    PasswordField Password_TF {
+        String text :=  [null] 
+    }
+    
+    Button Register_B {
+        String text := ['Register']
+
+        event onClick {
+            
+        }
+    }
+
+    Button Login_B {
+        String text := ['Log in']
+        User loggedUser
+        event onClick {
+                
+        }
+    }
+    Button Register_Mod{
+            String text := ['Register Mod']
+            event onClick {
+            }
+
+        }
+
+    
+}

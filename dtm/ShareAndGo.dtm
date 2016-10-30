@@ -1,0 +1,46 @@
+entity User {
+    Role role
+    String name
+    String surname
+    String password
+    Zone userzone
+    Set(Trip) trips oppositeTo passenger
+    Set(Trip) driving
+    Boolean isBanned
+}
+
+
+entity Location{
+    String location_name
+    String x
+    String y
+    Set(Zone) location_zone oppositeTo zone_locations
+    
+}
+entity Zone{
+    String zone_name
+    Set(Location) zone_locations oppositeTo location_zone
+}
+entity Trip{
+    Date date
+    String price
+    Integer places
+    Set(Location) trip_path
+    User driver
+    Set(User) passenger oppositeTo trips
+    
+}
+
+entity Report{
+    User reporter
+    User reported
+    String text
+    Trip trip
+}
+
+enum Role {
+    USER_NORMAL
+    USER_PREMIUM
+    ADMIN
+    USER_BANNED
+}

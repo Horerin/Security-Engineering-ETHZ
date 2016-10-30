@@ -1,0 +1,46 @@
+role USER_NORMAL {
+       User{
+           fullAccess
+        }
+        Location{
+            fullAccess
+        }
+        Zone{
+            fullAccess
+        }
+        Trip{
+            fullAccess
+        }
+}
+role USER_PREMIUM {
+        User{
+           fullAccess
+        }
+        Location{
+            fullAccess
+        }
+        Zone{
+            fullAccess
+        }
+        Trip{
+            fullAccess
+        }
+}
+role ADMIN{
+        User{
+           fullAccess
+           update(isBanned) [User.role = Normal -> numcomplaints=2  and User.role = premium -> numcom... = 5]
+        }
+        Location{
+            fullAccess
+        }
+        Zone{
+            fullAccess
+        }
+        Trip{
+            fullAccess
+        }
+}
+
+role USER_BANNED{
+}
