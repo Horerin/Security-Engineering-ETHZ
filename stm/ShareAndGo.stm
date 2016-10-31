@@ -1,14 +1,24 @@
 role USER_NORMAL {
        User{
-           fullAccess
+           read(role) constrainedBy[self = caller] 
+           read(surname) constrainedBy[self = caller] 
+           read(password) constrainedBy[self = caller]
+           read(userzone) constrainedBy[self = caller] 
+           read(name) //unconstrained
+           read(trips) constrainedBy[self = caller] 
+           read(isBanned) constrainedBy[self = caller]
         }
         Location{
-            fullAccess
+            read
         }
         Zone{
-            fullAccess
+            read
         }
         Trip{
+            read constrainedBy [self.trip_path->exists(m | m.location_zone->includes(caller.userzone))]
+            add(passenger) constrainedBy [target = caller and self.trip_path->forAll(v | v.location_zone->includes(caller.userzone))]
+        }
+        Report{
             fullAccess
         }
 }
@@ -25,20 +35,39 @@ role USER_PREMIUM {
         Trip{
             fullAccess
         }
+        Report{
+            fullAccess
+        }
 }
 role ADMIN{
         User{
-           fullAccess
-           update(isBanned) [User.role = Normal -> numcomplaints=2  and User.role = premium -> numcom... = 5]
+           update(role) constrainedBy[self.trips->select(t | Report.allInstances()->select(v1| v1.trip = t and v1.reported = self)->isEmpty())->size() >= 4]
+           update(isBanned) constrainedBy [((self.role = Role::USER_NORMAL) implies (Report.allInstances()->select(v | v.reported = self)->size() >= 2))  or  ((self.role = Role::USER_PREMIUM) implies (Report.allInstances()->select(v | v.reported = self)->size() >= 5))]
+           read
+           //((self.role = Role::USER_NORMAL) implies (Report.allInstances()->select(v | v.reported = self)->size >= 2))  or ((self.role = Role::USER_PREMIUM) implies (Report.allInstances()->select(v | v.reported = self)->size >= 5))
         }
         Location{
-            fullAccess
+            create
+            read
+            update(location_name)
+            update(x)
+            update(y)
+            add(location_zone)
+            remove(location_zone)
+            //cannot remove a whole location (not specified)
         }
         Zone{
-            fullAccess
+            create
+            read
+            update(zone_name)
+            add(zone_locations) //assign locations to zones, the inverse is also true
+            remove(zone_locations)
         }
         Trip{
-            fullAccess
+            read
+        }
+        Report{
+            read
         }
 }
 

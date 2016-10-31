@@ -5,7 +5,6 @@ entity User {
     String password
     Zone userzone
     Set(Trip) trips oppositeTo passenger
-    Set(Trip) driving
     Boolean isBanned
 }
 
@@ -22,7 +21,7 @@ entity Zone{
     Set(Location) zone_locations oppositeTo location_zone
 }
 entity Trip{
-    Date date
+    String date
     String price
     Integer places
     Set(Location) trip_path
