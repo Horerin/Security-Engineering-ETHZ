@@ -14,7 +14,7 @@ Window LoginWindow {
     }
     TextField Surname_TF{
         String text := [null]
-    }
+    }   
     Label Password_L {
         String text := ['Password']
     }
@@ -26,7 +26,33 @@ Window LoginWindow {
         String text := ['Register']
 
         event onClick {
-            
+               if [$Name_TF.text$.oclIsUndefined()] {
+                Name_TF.error := ['Error']
+                } else {
+                    Name_TF.error := [null]
+                }
+                if [$Password_TF.text$.oclIsUndefined()] {
+                    Password_TF.error := ['Error']
+                } else {
+                    Password_TF.error := [null]
+                }
+                if [$Name_TF.error$ = null and $Password_TF.error$ = null] {           
+                    if[User.allInstances()->forAll(c|c.name <> $Name_TF.text$)] {
+                        newUser := new User
+                        [$newUser$.name] := [$Name_TF.text$]
+                        [$newUser$.password] := [$Password_TF.text$]
+                        [$newUser$.surname] := [$Surname_TF.text$]
+                        [$newUser$.role] := [Role::USER_NORMAL] 
+                        open MainWindow(caller:[$newUser$], role:[$newUser$.role])
+                     } else {
+                        notification(['Error'],['This login name already exists. Choose another one.'],[500]) 
+                        Name_TF.text :=  [null]  
+                        Password_TF.text :=  [null] 
+                     }   
+                }
+                else {
+                    notification(['Error'],['The form contains errors. Please, check the form.'],[500]) 
+                }
         }
     }
 
@@ -34,12 +60,53 @@ Window LoginWindow {
         String text := ['Log in']
         User loggedUser
         event onClick {
-                
+                 if [$Name_TF.text$.oclIsUndefined()] {
+                    notification([''], ['No name specified '], [500])
+                 }else{
+                    if [$Password_TF.text$.oclIsUndefined()] {
+                         notification([''], ['No password specified '], [500])
+                    }else{
+                        loggedUser := [User.allInstances()->any(c|c.name = $Name_TF.text$ and c.password = $Password_TF.text$)]
+
+                        if [not($loggedUser$.oclIsUndefined())] {
+                                open MainWindow(caller:[$loggedUser$], role:[$loggedUser$.role])
+                        }else{
+                            notification([''], ['Wrong credentials '], [500])
+                        }
+                    }
+                 }
         }
     }
     Button Register_Mod{
             String text := ['Register Mod']
             event onClick {
+                if [$Name_TF.text$.oclIsUndefined()] {
+                Name_TF.error := ['Error']
+                } else {
+                    Name_TF.error := [null]
+                }
+                if [$Password_TF.text$.oclIsUndefined()] {
+                    Password_TF.error := ['Error']
+                } else {
+                    Password_TF.error := [null]
+                }
+                if [$Name_TF.error$ = null and $Password_TF.error$ = null] {           
+                    if[User.allInstances()->forAll(c|c.name <> $Name_TF.text$)] {
+                        newUser := new User
+                        [$newUser$.name] := [$Name_TF.text$]
+                        [$newUser$.password] := [$Password_TF.text$]
+                        [$newUser$.surname] := [$Surname_TF.text$]
+                        [$newUser$.role] := [Role::ADMIN] 
+                        open MainWindow(caller:[$newUser$], role:[$newUser$.role])
+                     } else {
+                        notification(['Error'],['This login name already exists. Choose another one.'],[500]) 
+                        Name_TF.text :=  [null]  
+                        Password_TF.text :=  [null] 
+                     }   
+                }
+                else {
+                    notification(['Error'],['The form contains errors. Please, check the form.'],[500]) 
+                }
             }
 
         }
