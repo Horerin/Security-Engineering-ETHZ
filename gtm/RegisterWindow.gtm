@@ -1,0 +1,81 @@
+Window RegisterWindow {
+    
+    Zone zone
+
+    String text := ['Register']
+
+    Label Name_L {
+        String text := ['Name']
+    }
+    TextField Name_TF {
+        String text :=  [null] 
+    }
+    Label Surname_L{
+        String text := ['Surname']
+    }
+    TextField Surname_TF{
+        String text := [null]
+    }   
+    Label Password_L {
+        String text := ['Password']
+    }
+    PasswordField Password_TF {
+        String text :=  [null] 
+    }
+    Label Zone_L{
+        String text := ['Zone']
+    }
+    ComboBox ZoneCB {
+        Set(Zone) rows := [Zone.allInstances()]
+        Label zoneNameLab {
+            String text := [$ZoneCB.row$.zone_name]
+        }
+    }
+
+    
+    Button Register_B {
+        String text := ['Register User']
+
+        event onClick {
+               open MainWindow()
+               
+        }
+    }
+    Button Register_Mod{
+            String text := ['Register Mod']
+            event onClick {
+                if [$Name_TF.text$.oclIsUndefined()] {
+                Name_TF.error := ['Error']
+                } else {
+                    Name_TF.error := [null]
+                }
+                if [$Password_TF.text$.oclIsUndefined()] {
+                    Password_TF.error := ['Error']
+                } else {
+                    Password_TF.error := [null]
+                }
+                if [$Name_TF.error$ = null and $Password_TF.error$ = null] {           
+                    if[User.allInstances()->forAll(c|c.name <> $Name_TF.text$)] {
+                        newUser := new User
+                        [$newUser$.name] := [$Name_TF.text$]
+                        [$newUser$.password] := [$Password_TF.text$]
+                        [$newUser$.surname] := [$Surname_TF.text$]
+                        [$newUser$.role] := [Role::ADMIN] 
+                        open MainWindow(caller:[$newUser$], role:[$newUser$.role])
+                     } else {
+                        notification(['Error'],['This login name already exists. Choose another one.'],[500]) 
+                        Name_TF.text :=  [null]  
+                        Password_TF.text :=  [null] 
+                     }   
+                }
+                else {
+                    notification(['Error'],['The form contains errors. Please, check the form.'],[500]) 
+                }
+            }
+
+        }
+
+
+
+    
+}

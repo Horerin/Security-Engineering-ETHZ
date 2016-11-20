@@ -38,6 +38,7 @@ entity Report{
 }
 
 enum Role {
+    SYSTEM
     USER_NORMAL
     USER_PREMIUM
     ADMIN

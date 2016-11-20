@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ns1:window-layout
-    ns1:id="LoginWindow"
+    ns1:id="RegisterWindow"
     xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
     xmlns:ns1='http://actiongui.org/schemes/ag-layout/2.4'
     xsi:schemaLocation='http://actiongui.org/schemes/ag-layout/2.4 http://actiongui.org/schemes/ag-layout/2.4/schema.xsd'>
@@ -35,6 +35,15 @@
                                     <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
                                 </ns1:entry>
                                 <ns1:entry>
+                                    <ns1:widget ns1:id="Surname_L" ns1:width="100%" ns1:height="23px"/>
+                                </ns1:entry>
+                                <ns1:entry>
+                                    <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
+                                </ns1:entry>
+                                <ns1:entry>
+                                    <ns1:widget ns1:id="Surname_TF" ns1:width="100%" ns1:height="auto"/>
+                                </ns1:entry>
+                                <ns1:entry>
                                     <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
                                 </ns1:entry>
                                 <ns1:entry>
@@ -50,22 +59,25 @@
                                     <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
                                 </ns1:entry>
                                 <ns1:entry>
+                                    <ns1:widget ns1:id="Zone_L" ns1:width="100%" ns1:height="23px"/>
+                                </ns1:entry>
+                                <ns1:entry>
+                                    <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
+                                </ns1:entry>
+                                <ns1:entry>
+                                    <ns1:widget ns1:id="ZoneCB" ns1:width="100%" ns1:height="auto"/>
+                                </ns1:entry>
+                                <ns1:entry>
+                                    <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
+                                </ns1:entry>
+                                <ns1:entry>
                                     <ns1:widget ns1:id="Register_B" ns1:width="100%" ns1:height="auto"/>
                                 </ns1:entry>
                                 <ns1:entry>
                                     <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
                                 </ns1:entry>
                                 <ns1:entry>
-                                    <ns1:widget ns1:id="Login_B" ns1:width="100%" ns1:height="auto"/>
-                                </ns1:entry>
-                                <ns1:entry>
-                                    <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
-                                </ns1:entry>
-                                <ns1:entry>
-                                    <ns1:line-layout orientation="horizontal" ns1:height="10px"/>
-                                </ns1:entry>
-                                <ns1:entry>
-                                    <ns1:widget ns1:id="Initialize_Scenario" ns1:width="100%" ns1:height="auto"/>
+                                    <ns1:widget ns1:id="Register_Mod" ns1:width="100%" ns1:height="auto"/>
                                 </ns1:entry>
                             </ns1:line-layout>
                         </ns1:entry>

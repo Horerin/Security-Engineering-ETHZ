@@ -1,5 +1,23 @@
+role SYSTEM{
+        User{
+           fullAccess
+        }
+        Location{
+            fullAccess
+        }
+        Zone{
+            fullAccess
+        }
+        Trip{
+            fullAccess
+        }
+        Report{
+            fullAccess
+        }
+}
 role USER_NORMAL {
        User{
+           create
            read(role) constrainedBy[self = caller] 
            read(surname) constrainedBy[self = caller] 
            read(password) constrainedBy[self = caller]
