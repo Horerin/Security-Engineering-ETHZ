@@ -18,12 +18,12 @@ role SYSTEM{
 role USER_NORMAL {
        User{
            create
-           read(role) constrainedBy[self = caller] 
-           read(surname) constrainedBy[self = caller] 
+           read(role) constrainedBy[self = caller]
+           read(surname) constrainedBy[self = caller]
            read(password) constrainedBy[self = caller]
-           read(userzone) constrainedBy[self = caller] 
+           read(userzone) constrainedBy[self = caller]
            read(name) //unconstrained
-           read(trips) constrainedBy[self = caller] 
+           read(trips) constrainedBy[self = caller]
            read(isBanned) constrainedBy[self = caller]
         }
         Location{
@@ -42,7 +42,14 @@ role USER_NORMAL {
 }
 role USER_PREMIUM {
         User{
-           fullAccess
+           create
+           read(role) constrainedBy[self = caller]
+           read(name)
+           read(surname)
+           read(password) constrainedBy[self = caller]
+           read(userzone) constrainedBy[self = caller]
+           read(trips) constrainedBy[self = caller]
+           read(isBanned) constrainedBy[self = caller]
         }
         Location{
             fullAccess
@@ -51,10 +58,26 @@ role USER_PREMIUM {
             fullAccess
         }
         Trip{
-            fullAccess
+            //can READ iff the trip passes in a location that belongs
+            //EITHER to the user's zone
+            //OR to a zone overlapping with the user's zone
+            read constrainedBy [self.trip_path->exists(m | m.location_zone->includes(caller.userzone))
+                or self.trip_path->forAll(z | z.location_zone->exists(y | y.zone_locations->exists(x | x.location_zone->exists(caller.userzone))))]
+
+            //can JOIN a trip (add himself), iff at least one ot the locations in the trip belongs to the user's zone
+            add(passenger) constrainedBy[target = caller and self.trip_path->exists(v | v.location_zone->includes(caller.userzone))]
+
+            //can CREATE new trip iff all locations with the trip are:
+            //EITHER belong to the user's zone
+            //OR blong to zones that the user visited before in other trips
+            create
+            add(trip_path) constrainedBy [self.trip_path->forAll(v | v.location_zone->includes(caller.userzone)) or caller.trips->exists(trip_path.zone_location->includes(self.location_zone)))] //NOT SURE, test
         }
         Report{
+            //can report misbehaviour of a user with respect a trip iff shared the trip with the user (driver/pax)
+            //TODO
             fullAccess
+
         }
 }
 role ADMIN{
