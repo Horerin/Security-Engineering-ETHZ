@@ -70,6 +70,7 @@ role USER_PREMIUM {
             //can CREATE new trip iff all locations with the trip are:
             //EITHER belong to the user's zone
             //OR blong to zones that the user visited before in other trips
+            //TODO
             create
             add(trip_path) constrainedBy [self.trip_path->forAll(v | v.location_zone->includes(caller.userzone)) or caller.trips->exists(trip_path.zone_location->includes(self.location_zone)))] //NOT SURE, test
         }
