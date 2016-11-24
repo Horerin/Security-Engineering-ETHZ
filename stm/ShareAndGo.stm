@@ -17,13 +17,12 @@ role SYSTEM{
 }
 role USER_NORMAL {
        User{
-           create
-           read(role) constrainedBy[self = caller]
-           read(surname) constrainedBy[self = caller]
+           read(role) constrainedBy[self = caller] 
+           read(surname)
            read(password) constrainedBy[self = caller]
-           read(userzone) constrainedBy[self = caller]
-           read(name) //unconstrained
-           read(trips) constrainedBy[self = caller]
+           read(userzone) constrainedBy[self = caller] 
+           read(name)
+           read(trips) constrainedBy[self = caller] 
            read(isBanned) constrainedBy[self = caller]
         }
         Location{
@@ -62,7 +61,8 @@ role USER_PREMIUM {
             //EITHER to the user's zone
             //OR to a zone overlapping with the user's zone
             read constrainedBy [self.trip_path->exists(m | m.location_zone->includes(caller.userzone))
-                or self.trip_path->forAll(z | z.location_zone->exists(y | y.zone_locations->exists(x | x.location_zone->exists(caller.userzone))))]
+            or 
+            self.trip_path->forAll(z | z.location_zone->exists(y | y.zone_locations->exists(x | x.location_zone->exists(f | f = caller.userzone))))]
 
             //can JOIN a trip (add himself), iff at least one ot the locations in the trip belongs to the user's zone
             add(passenger) constrainedBy[target = caller and self.trip_path->exists(v | v.location_zone->includes(caller.userzone))]
@@ -72,7 +72,9 @@ role USER_PREMIUM {
             //OR blong to zones that the user visited before in other trips
             //TODO
             create
-            add(trip_path) constrainedBy [self.trip_path->forAll(v | v.location_zone->includes(caller.userzone)) or caller.trips->exists(trip_path.zone_location->includes(self.location_zone)))] //NOT SURE, test
+            add(trip_path) constrainedBy [caller.userzone.zone_locations.asSet()->includes(target)
+            or
+            caller.trips->exists(z | z.trip_path->includes(target))]
         }
         Report{
             //can report misbehaviour of a user with respect a trip iff shared the trip with the user (driver/pax)
