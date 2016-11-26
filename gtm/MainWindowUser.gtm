@@ -1,0 +1,11 @@
+Window MainWindowUser {
+    User caller //user
+    String text := ['User Menu']
+    Button Info_B {
+        String text := ['Account information']
+        event onClick {
+                 open ViewInfoUser(caller:[$MainWindowUser.caller$], role:[$MainWindowUser.caller$.role])
+        }
+    }
+
+}

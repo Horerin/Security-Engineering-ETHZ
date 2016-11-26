@@ -38,7 +38,11 @@ Window LoginWindow {
                         loggedUser := [User.allInstances()->any(c|c.name = $Name_TF.text$ and c.password = $Password_TF.text$)]
 
                         if [not($loggedUser$.oclIsUndefined())] {
-                                open MainWindow(caller:[$loggedUser$], role:[$loggedUser$.role])
+                                if [$loggedUser$.role = Role::ADMIN]{
+                                    open MainWindowAdmin(caller:[$loggedUser$], role:[$loggedUser$.role])
+                                }else{
+                                    open MainWindowUser(caller:[$loggedUser$], role:[$loggedUser$.role])
+                                }
                         }else{
                             notification([''], ['Wrong credentials '], [500])
                         }
@@ -48,7 +52,7 @@ Window LoginWindow {
     }
     Button Initialize_Scenario{
         //Used to delete the whole database in case of created and create a moderator just as explained in the description
-        String text := ['Initialize']
+        String text := ['Initial Scenario']
         event onClick{
         // First, delete the instances of all entities
         foreach user in [User.allInstances()] {
@@ -72,20 +76,115 @@ Window LoginWindow {
         [$loc_dummy$.x] := ['9.4224']
         [$loc_dummy$.y] :=['47.0478']
 
-         zone_dummy := new Zone
+        loc_dummy2 := new Location
+        [$loc_dummy2$.location_name] := ['Wangs']
+        [$loc_dummy2$.x] := ['9.45']
+        [$loc_dummy2$.y] := ['47.016667']
+
+        zone_dummy := new Zone
         [$zone_dummy$.zone_name] := ['Sarganserland']
         [$zone_dummy$.zone_locations] += [$loc_dummy$]
+        [$zone_dummy$.zone_locations] += [$loc_dummy2$]
 
         [$loc_dummy$.location_zone] += [$zone_dummy$]
+        [$loc_dummy2$.location_zone] += [$zone_dummy$]
         
         
-         mod := new User
+       
+        
+        loc_dummy3 := new Location
+        [$loc_dummy3$.location_name] := ['Oerlikon']
+        [$loc_dummy3$.x] := ['8.5449']
+        [$loc_dummy3$.y] := ['47.4093']
+
+        loc_dummy4 := new Location
+        [$loc_dummy4$.location_name] := ['Zurich-City']
+        [$loc_dummy4$.x] := ['8.5417']
+        [$loc_dummy4$.y] := ['47.3769']
+
+        
+        
+        
+         zone_dummy2 := new Zone
+        [$zone_dummy2$.zone_name] := ['Zuerich']
+        [$zone_dummy2$.zone_locations] += [$loc_dummy3$]
+        [$zone_dummy2$.zone_locations] += [$loc_dummy4$]
+        
+
+        [$loc_dummy3$.location_zone] += [$zone_dummy2$]
+        [$loc_dummy4$.location_zone] += [$zone_dummy2$]
+        
+
+        mod := new User
         [$mod$.name] := ['admin']
         [$mod$.password] := ['secret']
         [$mod$.surname] := ['admin']
         [$mod$.role] := [Role::ADMIN]
         [$mod$.isBanned] := [false]
         [$mod$.userzone] := [$zone_dummy$]
+
+        user_dummy := new User
+        [$user_dummy$.name] := ['dummy']
+        [$user_dummy$.password] := ['dummy']
+        [$user_dummy$.surname] := ['dummy']
+        [$user_dummy$.role] := [Role::USER_NORMAL]
+        [$user_dummy$.isBanned] := [false]
+        [$user_dummy$.userzone] := [$zone_dummy$]
+        
+        user_dummy2 := new User
+        [$user_dummy2$.name] := ['dummy2']
+        [$user_dummy2$.password] := ['dummy2']
+        [$user_dummy2$.surname] := ['dummy2']
+        [$user_dummy2$.role] := [Role::USER_PREMIUM]
+        [$user_dummy2$.isBanned] := [false]
+        [$user_dummy2$.userzone] := [$zone_dummy$]
+        
+        user_dummy3 := new User
+        [$user_dummy3$.name] := ['dummy3']
+        [$user_dummy3$.password] := ['dummy3']
+        [$user_dummy3$.surname] := ['dummy3']
+        [$user_dummy3$.role] := [Role::USER_NORMAL]
+        [$user_dummy3$.isBanned] := [false]
+        [$user_dummy3$.userzone] := [$zone_dummy2$]
+        
+        user_dummy4 := new User
+        [$user_dummy4$.name] := ['dummy4']
+        [$user_dummy4$.password] := ['dummy4']
+        [$user_dummy4$.surname] := ['dummy4']
+        [$user_dummy4$.role] := [Role::USER_PREMIUM]
+        [$user_dummy4$.isBanned] := [false]
+        [$user_dummy4$.userzone] := [$zone_dummy2$]
+
+        
+        //a trip in sarganserland (one zone)
+        trip_dummy := new Trip
+        [$trip_dummy$.date] := ['time']
+        [$trip_dummy$.price] := ['31.415']
+        [$trip_dummy$.trip_path] += [$loc_dummy$]
+        [$trip_dummy$.trip_path] += [$loc_dummy2$]
+        [$trip_dummy$.driver] := [$user_dummy2$] //he's premium
+        [$trip_dummy$.passenger] += [$user_dummy$]
+
+        //a trip in zurich (one zone)
+        trip_dummy2 := new Trip
+        [$trip_dummy2$.date] := ['time']
+        [$trip_dummy2$.price] := ['131.415'] //zurich is expencive
+        [$trip_dummy2$.trip_path] += [$loc_dummy3$]
+        [$trip_dummy2$.trip_path] += [$loc_dummy4$]
+        [$trip_dummy2$.driver] := [$user_dummy4$] //he's premium
+        [$trip_dummy2$.passenger] += [$user_dummy3$]
+
+        //a trip zurich sarganserland (two zones)
+        trip_dummy3 := new Trip
+        [$trip_dummy3$.date] := ['time']
+        [$trip_dummy3$.price] := ['131.415'] //zurich is expencive
+        [$trip_dummy3$.trip_path] += [$loc_dummy$]
+        [$trip_dummy3$.trip_path] += [$loc_dummy4$]
+        [$trip_dummy3$.driver] := [$user_dummy2$] //he's premium
+        
+        
+        
+        
 
         notification(['Message'],['The application data has been reset to the initial scenario'],[2000])
         }

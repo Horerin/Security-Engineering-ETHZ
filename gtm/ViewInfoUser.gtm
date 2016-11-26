@@ -1,0 +1,135 @@
+Window ViewInfoUser{
+    User caller
+    String text := ['Account details']
+    Label Name_L1 {
+        String text := ['Name:']
+    }
+    Label Name_L2 {
+        String name := [$ViewInfoUser.caller$.name]
+        String surname := [$ViewInfoUser.caller$.surname]
+        String text := [$name$.concat(' ').concat($surname$)]
+    }
+    Table ListOfTrips {
+        Set(Trip) rows := [$ViewInfoUser.caller$.trips->asSet()]
+        Set(Trip) selected := [null]
+        columns {
+            ['Trip Date'] : Label triptime {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.date]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+
+           ['Price'] : Label price {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.price]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           ['Places'] : Label places {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.trip_path->size().toString()]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           ['Driver'] : Label driver {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.driver.name]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           ['Starting place'] : Label start {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.trip_path->asSequence()->first().location_name]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+            ['Number of passengers'] : Label passno {
+                            String text{
+                                if[$text$.oclIsInvalid()]{
+                                    error := ['no permission']
+                                }
+                                else{
+                                    error := [null]
+                                }
+                            }
+                            event onView (text){
+                                text := [null]
+                                try{
+                                    text := [$ListOfTrips.row$.passenger->size().toString()]
+                                }catch(SecurityException){
+                                    text := ['***']
+                                }
+                            }
+                }
+        }
+    }
+
+
+}
