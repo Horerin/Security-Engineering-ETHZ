@@ -1,0 +1,18 @@
+Window ViewUpdateUser{
+    User subject
+    User caller
+    String text := ['Update User']
+    
+    Button upgrade_user_b{
+        String text := ['Upgrade User']
+        event onClick {
+                 try{
+                    [$ViewUpdateUser.subject$.role] := [Role::USER_PREMIUM]
+                  }catch(SecurityException){
+                    notification(['Error'],['You do not have privileges or conditions not satisfied to upgrade'],[500])
+                }
+        }
+    }
+
+    
+}

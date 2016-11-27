@@ -8,4 +8,11 @@ Window MainWindowUser {
         }
     }
 
+     Button Users_B {
+        String text := ['Users information']
+        event onClick {
+                 open ViewListUser(caller:[$MainWindowUser.caller$], role:[$MainWindowUser.caller$.role])
+        }
+    }
+
 }

@@ -21,7 +21,7 @@ entity Zone{
     Set(Location) zone_locations oppositeTo location_zone
 }
 entity Trip{
-    String date
+    String date 
     String price
     Set(Location) trip_path
     User driver

@@ -158,7 +158,7 @@ Window LoginWindow {
         
         //a trip in sarganserland (one zone)
         trip_dummy := new Trip
-        [$trip_dummy$.date] := ['time']
+        //[$trip_dummy$.date] := [LocalDateTime.now()]
         [$trip_dummy$.price] := ['31.415']
         [$trip_dummy$.trip_path] += [$loc_dummy$]
         [$trip_dummy$.trip_path] += [$loc_dummy2$]
@@ -167,8 +167,8 @@ Window LoginWindow {
 
         //a trip in zurich (one zone)
         trip_dummy2 := new Trip
-        [$trip_dummy2$.date] := ['time']
-        [$trip_dummy2$.price] := ['131.415'] //zurich is expencive
+        //[$trip_dummy2$.date] := [LocalDateTime.now()]
+        [$trip_dummy2$.price] := ['10000'] //zurich is expencive
         [$trip_dummy2$.trip_path] += [$loc_dummy3$]
         [$trip_dummy2$.trip_path] += [$loc_dummy4$]
         [$trip_dummy2$.driver] := [$user_dummy4$] //he's premium
@@ -176,16 +176,11 @@ Window LoginWindow {
 
         //a trip zurich sarganserland (two zones)
         trip_dummy3 := new Trip
-        [$trip_dummy3$.date] := ['time']
+       // [$trip_dummy3$.date] := [LocalDateTime.now()]
         [$trip_dummy3$.price] := ['131.415'] //zurich is expencive
         [$trip_dummy3$.trip_path] += [$loc_dummy$]
         [$trip_dummy3$.trip_path] += [$loc_dummy4$]
         [$trip_dummy3$.driver] := [$user_dummy2$] //he's premium
-        
-        
-        
-        
-
         notification(['Message'],['The application data has been reset to the initial scenario'],[2000])
         }
         

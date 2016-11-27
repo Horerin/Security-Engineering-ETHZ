@@ -1,0 +1,138 @@
+Window ViewListUser{
+    User caller
+    String text := ['User List']
+       
+    Label User_L {
+        String text := ['Users']
+    }
+    Table ListOfUsers {
+        Set(User) rows := [User.allInstances()]
+        Set(User) selected := [null]
+        columns{
+            ['Name'] : Label name_usr {
+                                String text{
+                                    if[$text$.oclIsInvalid()]{
+                                        error := ['no permission']
+                                    }
+                                    else{
+                                        error := [null]
+                                    }
+                                }
+                                event onView (text){
+                                    text := [null]
+                                    try{
+                                        text := [$ListOfUsers.row$.name]
+                                    }catch(SecurityException){
+                                        text := ['***']
+                                    }
+                                }
+                    }
+            ['Surname'] : Label surname_usr {
+                            String text{
+                                if[$text$.oclIsInvalid()]{
+                                    error := ['no permission']
+                                }
+                                else{
+                                    error := [null]
+                                }
+                            }
+                            event onView (text){
+                                text := [null]
+                                try{
+                                    text := [$ListOfUsers.row$.surname]
+                                }catch(SecurityException){
+                                    text := ['***']
+                                }
+                            }
+                }
+            ['Role'] : Label role_usr {
+                            String text{
+                                if[$text$.oclIsInvalid()]{
+                                    error := ['no permission']
+                                }
+                                else{
+                                    error := [null]
+                                }
+                            }
+                            event onView (text){
+                                text := [null]
+                                try{
+                                    text := [$ListOfUsers.row$.role.toString()]
+                                }catch(SecurityException){
+                                    text := ['***']
+                                }
+                            }
+                }
+            ['Zone'] : Label zone_usr {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfUsers.row$.userzone.zone_name]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }
+            ['#Trips'] : Label trips_usr {
+                      String text{
+                          if[$text$.oclIsInvalid()]{
+                              error := ['no permission']
+                          }
+                          else{
+                              error := [null]
+                          }
+                      }
+                      event onView (text){
+                          text := [null]
+                          try{
+                              text := [$ListOfUsers.row$.trips->size().toString()]
+                          }catch(SecurityException){
+                              text := ['***']
+                          }
+                      }
+               }
+            ['is banned'] : Label banned_usr {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfUsers.row$.isBanned.toString()]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                       }
+               }
+            
+        }
+        
+    }
+
+    Button ModifyUser_B{
+        String text := ['Modify User']
+        event onClick {
+                 if[$ListOfUsers.selected$->size() <> 1]{
+                     notification(['Error'],['Please select only one user'],[500])
+                 }else{
+                    open ViewUpdateUser(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role], subject:[$ListOfUsers.selected$->asOrderedSet()->first()])
+                 }  
+        }
+    
+    }
+
+
+}
