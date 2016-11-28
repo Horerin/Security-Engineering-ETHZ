@@ -14,5 +14,11 @@ Window MainWindowUser {
                  open ViewListUser(caller:[$MainWindowUser.caller$], role:[$MainWindowUser.caller$.role])
         }
     }
+    Button Join_Trips_B{
+        String text := ['Join Trip']
+        event onClick{
+            open ViewJoinableTrips(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
+        }
+    }
 
 }

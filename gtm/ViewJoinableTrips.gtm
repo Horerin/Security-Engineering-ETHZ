@@ -1,19 +1,8 @@
-Window ViewInfoUser{
+Window ViewJoinableTrips {
     User caller
-    String text := ['Account details']
-    Label Name_L1 {
-        String name := [$ViewInfoUser.caller$.name]
-        String surname := [$ViewInfoUser.caller$.surname]
-        String text := ['Name: '.concat($name$).concat(' ').concat($surname$)]
-    }
-    Label is_banned_L {
-        String text := ['Banned status: '.concat($ViewInfoUser.caller$.isBanned.toString())]
-    }   
-    Label Trips_L{
-        String text := ['Trips taken:']
-    }
+
     Table ListOfTrips {
-        Set(Trip) rows := [$ViewInfoUser.caller$.trips->asSet()]
+        Set(Trip) rows := [Trip.allInstances()]
         Set(Trip) selected := [null]
         columns {
             ['Trip Date'] : Label triptime {
@@ -133,16 +122,30 @@ Window ViewInfoUser{
                 }
         }
     }
+
+    Button JoinTrip_B{
+        String text := ['View Trip']
+        event onClick {
+                 if[$ListOfTrips.selected$->size() <> 1]{
+                     notification(['Error'],['Please select only one user'],[500])
+                 }else{
+                    try{
+                        open ViewTripInfo(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role],subject:[$ListOfTrips.selected$->asOrderedSet()->first()])
+                     
+                    }catch(SecurityException){
+                         notification(['Error'],['Cannot perform action'],[500])
+                    }
+                 }  
+        }
+    }
     Button go_back_B{
         String text := ['Go Back']
         event onClick {
             try{
-                open MainWindowUser(caller:[$ViewInfoUser.caller$], role:[$ViewInfoUser.caller$.role])
+                open MainWindowUser(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role])
             }catch(SecurityException){
                     notification(['Error'],['Cannot perform action'],[500])
              }
         }
     }
-
-
 }

@@ -22,7 +22,7 @@ entity Zone{
 }
 entity Trip{
     String date 
-    String price
+    Real price
     Set(Location) trip_path
     User driver
     Set(User) passenger oppositeTo trips

@@ -1,0 +1,104 @@
+Window ViewTripInfo{
+    User caller
+    Trip subject
+    String text := ['Trip Info']
+
+    Label Trip_Cost {
+        String text := ['Cost: '.concat($ViewTripInfo.subject$.price.toString())]
+    }
+    
+    Label Trip_Driver{
+        String text := ['Driver: '.concat($ViewTripInfo.subject$.driver.name).concat(' ').concat($ViewTripInfo.subject$.driver.surname)]
+    }
+
+    Table ListOfLocations {
+        Set(Location) rows := [$ViewTripInfo.subject$.trip_path]
+        Set(Location) selected := [null]
+        columns {
+            ['Location Name'] : Label triptime {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.location_name]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+
+           ['X'] : Label price {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.x]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           ['Y'] : Label places {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.y]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+        }
+    }
+
+    Button Join_Trip_B{
+        String text := ['Join Trip']
+        event onClick{
+            try{
+                [$ViewTripInfo.caller$.trips] += [$ViewTripInfo.subject$]
+                [$ViewTripInfo.subject$.passenger] += [$ViewTripInfo.caller$]
+           
+            }catch(SecurityException){
+                       notification(['Error'],['Cannot perform action'],[500])
+            }
+        }
+    }
+
+    Button go_back_B{
+            String text := ['Go Back']
+            event onClick {
+                try{
+                    open ViewJoinableTrips(caller:[$ViewTripInfo.caller$], role:[$ViewTripInfo.caller$.role])
+                }catch(SecurityException){
+                        notification(['Error'],['Cannot perform action'],[500])
+                 }
+            }
+        }
+
+}

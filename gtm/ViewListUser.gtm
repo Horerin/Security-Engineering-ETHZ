@@ -121,7 +121,6 @@ Window ViewListUser{
         }
         
     }
-
     Button ModifyUser_B{
         String text := ['Modify User']
         event onClick {
@@ -133,6 +132,14 @@ Window ViewListUser{
         }
     
     }
-
-
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                open MainWindowUser(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role])
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
 }

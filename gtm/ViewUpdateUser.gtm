@@ -2,6 +2,18 @@ Window ViewUpdateUser{
     User subject
     User caller
     String text := ['Update User']
+
+    Label Name_L1 {
+        String name := [$ViewUpdateUser.subject$.name]
+        String surname := [$ViewUpdateUser.subject$.surname]
+        String text := ['Name: '.concat($name$).concat(' ').concat($surname$)]
+    }
+    Label is_banned_L {
+        String text := ['Banned status: '.concat($ViewUpdateUser.subject$.isBanned.toString())]
+    }   
+    Label Trips_L{
+        String text := ['Trips taken:']
+    }
     
     Button upgrade_user_b{
         String text := ['Upgrade User']
@@ -14,5 +26,14 @@ Window ViewUpdateUser{
         }
     }
 
-    
+    Button go_back_B{
+            String text := ['Go Back']
+            event onClick {
+                try{
+                    open ViewListUser(caller:[$ViewUpdateUser.caller$], role:[$ViewUpdateUser.caller$.role])
+                }catch(SecurityException){
+                        notification(['Error'],['Cannot perform action'],[500])
+                 }
+            }
+        }
 }
