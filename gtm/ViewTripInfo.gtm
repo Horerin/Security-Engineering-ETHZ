@@ -13,7 +13,7 @@ Window ViewTripInfo{
 
     Table ListOfLocations {
         Set(Location) rows := [$ViewTripInfo.subject$.trip_path]
-        Set(Location) selected := [null]
+        Location selected := [null]
         columns {
             ['Location Name'] : Label triptime {
                 String error := [null]
@@ -35,7 +35,6 @@ Window ViewTripInfo{
                     
                 }
             }
-
            ['X'] : Label price {
                 String text{
                     if[$text$.oclIsInvalid()]{
@@ -89,7 +88,6 @@ Window ViewTripInfo{
             }
         }
     }
-
     Button go_back_B{
             String text := ['Go Back']
             event onClick {

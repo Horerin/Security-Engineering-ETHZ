@@ -28,7 +28,6 @@ entity Trip{
     Set(User) passenger oppositeTo trips
     
 }
-
 entity Report{
     User reporter
     User reported

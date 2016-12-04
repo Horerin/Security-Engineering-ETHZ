@@ -14,6 +14,217 @@ Window ViewUpdateUser{
     Label Trips_L{
         String text := ['Trips taken:']
     }
+    Table ListOfTrips {
+        Set(Trip) rows := [$ViewUpdateUser.subject$.trips]
+        Trip selected := [null]
+        columns {
+            ['Trip Date'] : Label triptime {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.date]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+
+           ['Price'] : Label price {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.price.toString()]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           ['Places'] : Label places {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.trip_path->size().toString()]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           ['Driver'] : Label driver {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.driver.name]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           ['Starting place'] : Label start {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfTrips.row$.trip_path->asSequence()->first().location_name]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+            ['Number of passengers'] : Label passno {
+                            String text{
+                                if[$text$.oclIsInvalid()]{
+                                    error := ['no permission']
+                                }
+                                else{
+                                    error := [null]
+                                }
+                            }
+                            event onView (text){
+                                text := [null]
+                                try{
+                                    text := [$ListOfTrips.row$.passenger->size().toString()]
+                                }catch(SecurityException){
+                                    text := ['***']
+                                }
+                            }
+                }
+        }
+    }
+    Label Reports_User_L {
+        String text := ['User reports:'] //where he is the target
+    }  
+
+    Table ListOfReports{
+        Set(Report) rows := [Report.allInstances()->select(t | t.reported = $ViewUpdateUser.subject$)]
+        Report selected := [null]
+        columns {
+            ['Reporter'] : Label Reporter_Name {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfReports.row$.reporter.surname.concat($ListOfReports.row$.reporter.name)]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+            ['Trip Price'] : Label Trip_Price {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfReports.row$.reporter.surname.concat(' ').concat($ListOfReports.row$.reporter.name)]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+            ['Trip Driver'] : Label Trip_Driver_Name {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfReports.row$.trip.driver.surname.concat(' ').concat($ListOfReports.row$.trip.driver.name)]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+            ['Description'] : Label Report_Description {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfReports.row$.text]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+        }
+    }
     
     Button upgrade_user_b{
         String text := ['Upgrade User']

@@ -21,4 +21,11 @@ Window MainWindowUser {
         }
     }
 
+     Button Report_User_B{
+        String text := ['Report a User from a past Trip']
+        event onClick{
+            open ViewReportTrips(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
+        }
+    }
+
 }

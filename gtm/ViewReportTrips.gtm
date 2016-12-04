@@ -1,8 +1,10 @@
-Window ViewJoinableTrips {
+Window ViewReportTrips {
     User caller
 
     Table ListOfTrips {
-        Set(Trip) rows := [Trip.allInstances()]
+        Set(Trip) rows := [$ViewReportTrips.caller$.trips] 
+        //We could set it to allInstances, but the user just wants to report
+        // people from its trips, not from all. So this way its easier for the user, more user friendly
         Trip selected := [null]
         columns {
             ['Trip Date'] : Label triptime {
@@ -127,8 +129,11 @@ Window ViewJoinableTrips {
         String text := ['View Trip']
         event onClick {
                     try{
-                        open ViewTripInfo(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role],subject:[$ListOfTrips.selected$])
-                     
+                        if[$ListOfTrips.selected$.oclIsUndefined()]{
+                            notification(['Error'],['Cannot perform action'],[500])
+                        }else{
+                            open ViewReportUsers(caller:[$ViewReportTrips.caller$], role:[$ViewReportTrips.caller$.role],subject:[$ListOfTrips.selected$])
+                     }
                     }catch(SecurityException){
                          notification(['Error'],['Cannot perform action'],[500])
                     }
@@ -139,7 +144,7 @@ Window ViewJoinableTrips {
         String text := ['Go Back']
         event onClick {
             try{
-                open MainWindowUser(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role])
+                open MainWindowUser(caller:[$ViewReportTrips.caller$], role:[$ViewReportTrips.caller$.role])
             }catch(SecurityException){
                     notification(['Error'],['Cannot perform action'],[500])
              }

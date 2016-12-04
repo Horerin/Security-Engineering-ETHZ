@@ -14,7 +14,7 @@ Window ViewInfoUser{
     }
     Table ListOfTrips {
         Set(Trip) rows := [$ViewInfoUser.caller$.trips->asSet()]
-        Set(Trip) selected := [null]
+        Trip selected := [null]
         columns {
             ['Trip Date'] : Label triptime {
                 String error := [null]

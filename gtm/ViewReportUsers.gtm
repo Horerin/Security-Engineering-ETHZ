@@ -1,12 +1,10 @@
-Window ViewListUser{
+Window ViewReportUsers {
     User caller
-    String text := ['User List']
-       
-    Label User_L {
-        String text := ['Users']
-    }
+    Trip subject
+
+
     Table ListOfUsers {
-        Set(User) rows := [User.allInstances()]
+        Set(User) rows := [$ViewReportUsers.subject$.passenger]
         User selected := [null]
         columns{
             ['Name'] : Label name_usr {
@@ -121,26 +119,38 @@ Window ViewListUser{
         }
         
     }
-    Button ModifyUser_B{
-        String text := ['Modify User']
+     Label Report_L {
+        String text := ['Report information']
+    }
+    TextField Report_TF {
+           String text :=  [null] 
+    }
+    Button Report_User_B{
+        String text := ['Report User']
         event onClick {
             try{
-                if[$ListOfUsers.selected$ = null]{
-                    notification(['Error'],['Please select a user first'],[500])
-                }else{
-                    open ViewUpdateUser(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role], subject:[$ListOfUsers.selected$])
-                }
-             }catch(SecurityException){
-               notification(['Error'],['Cannot perform action'],[500])
+                 if [$Report_TF.text$.oclIsUndefined()] {
+                    notification([''], ['No text specified '], [500])
+                 }else{
+                    report := new Report
+                    [$report$.reporter] := [$ViewReportUsers.caller$]
+                    [$report$.reported] := [$ListOfUsers.selected$]
+                    [$report$.text] := [$Report_TF.text$]
+                    [$report$.trip] := [$ViewReportUsers.subject$]
+                    }
+                
+
+            }catch(SecurityException){
+                 notification(['Error'],['Cannot perform action'],[500])
             }
+                 
         }
-    
     }
     Button go_back_B{
         String text := ['Go Back']
         event onClick {
             try{
-                open MainWindowUser(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role])
+                open ViewReportTrips(caller:[$ViewReportUsers.caller$], role:[$ViewReportUsers.caller$.role])
             }catch(SecurityException){
                     notification(['Error'],['Cannot perform action'],[500])
              }
