@@ -28,6 +28,9 @@ Window RegisterWindow {
     }
     ComboBox ZoneCB {
         Set(Zone) rows := [Zone.allInstances()]
+
+        Zone selected
+
         Label zoneNameLab {
             String text := [$ZoneCB.row$.zone_name]
         }
@@ -54,6 +57,7 @@ Window RegisterWindow {
                         [$newUser$.password] := [$Password_TF.text$]
                         [$newUser$.surname] := [$Surname_TF.text$]
                         [$newUser$.role] := [Role::USER_NORMAL] 
+                        [$newUser$.userzone] := [$ZoneCB.selected$]
                         open MainWindowUser(caller:[$newUser$], role:[$newUser$.role])
                      } else {
                         notification(['Error'],['This login name already exists. Choose another one.'],[500]) 

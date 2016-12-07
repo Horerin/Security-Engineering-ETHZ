@@ -1,0 +1,150 @@
+Window ExtendZone {
+    Zone subject
+    String text := ['Add new locations to zone']
+    
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Label info_L {
+        String text := ['Current zone /'.concat($ExtendZone.subject$.zone_name).concat( '/ includes following locations:' )]
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Table ListOfLocations {
+        Set(Location) rows := [$ExtendZone.subject$.zone_locations->asSet()]
+        Location selected := [null]
+        columns {
+
+            ['Coordinate Y'] : Label location_y {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfLocations.row$.y]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }// Column 'Coordinate Y'
+
+            ['Coordinate X'] : Label location_x {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfLocations.row$.x]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }// Column 'Coordinate X'
+
+
+            ['Location Name'] : Label location_name {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfLocations.row$.location_name]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }// Column 'Zone'               
+        }//columns
+    }//Table ListOfLocations 
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Label info_L2 {
+        String text := ['Select Location from the droplist and press "Add Location"']
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ComboBox LocAss {
+        String text := ['Select a location to assign']
+//        Set(Location) rows := [Location.allInstances()->forAll(l|l.location_name <> $ExtendZone.subject$.zone_locations ) ]
+//        Set(Location) rows := [Location.allInstances()->select(l|l.location_name <> $ExtendZone.subject$.zone_locations.allInstances().asSet()->includes(l)  ) ]
+        Set(Location) rows := [Location.allInstances()]
+
+
+        Location selected
+
+        Label LocName_L {
+            String text := [$ExtendZone.LocAss.row$.location_name]
+        }
+    }//LocASS
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button AssignLocation {
+        String text := ['Assing selected location to zone']
+        
+        event onClick{ 
+            
+            //Check Location selecton
+        //    if [$ExtendZone.LocAss.selected$.oclIsUndefined() or $ExtendZone.LocAss.selected$ = null] {
+        //        [$ExtendZone.LocAss.selected$.error] := ['Error']
+        //    } else {
+        //        [$ExtendZone.LocAss.selected$.error] := [null]
+        //    }
+            
+            //
+            if [$ExtendZone.LocAss.selected$ <> null ] {           
+                //check that the location with the same zone doen not exist
+                
+                try {
+                    if [$ExtendZone.subject$.zone_locations->forAll(l|l.location_name <> $ExtendZone.LocAss.selected$.location_name)] {
+                        //if we dont have the same location in this zone - ADD
+                            [$ExtendZone.subject$.zone_locations] += [$ExtendZone.LocAss.selected$]
+                            reevaluate ExtendZone.ListOfLocations.rows
+                            notification(['Success'],['The Location has been assigned to this zone'],[1000]) 
+                        }
+                    
+                    else { 
+                        //if we have - WARNING
+                        notification(['Warning'],['The Location with the same name already assigned to this zone'],[1000]) 
+                    }
+
+                }//try
+                catch (SecurityException) {
+                        notification(["Security error"], ["You cannot assign locations"], [1500])
+                }
+
+
+            }
+            else {
+                notification(['Error'],['Please select location to assign'],[1500]) 
+            }
+
+
+        }//onClick
+
+    }//AssignLocation
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                open LocationsZones(caller:[$ExtendZone.caller$], role:[$ExtendZone.caller$.role])
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+}

@@ -15,7 +15,8 @@ Window LoginWindow {
     PasswordField Password_TF {
         String text :=  [null] 
     }
-    
+
+
     Button Register_B {
         String text := ['Register']
 

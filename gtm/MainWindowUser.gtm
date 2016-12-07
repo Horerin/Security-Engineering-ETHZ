@@ -8,7 +8,7 @@ Window MainWindowUser {
         }
     }
 
-     Button Users_B {
+    Button Users_B {
         String text := ['Users information']
         event onClick {
                  open ViewListUser(caller:[$MainWindowUser.caller$], role:[$MainWindowUser.caller$.role])
@@ -21,11 +21,20 @@ Window MainWindowUser {
         }
     }
 
-     Button Report_User_B{
+    Button Locations_B {
+        String text := ['Locations & Zones']
+        event onClick{
+            open LocationsZones(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
+        }
+    }
+
+    Button Report_User_B{
         String text := ['Report a User from a past Trip']
         event onClick{
             open ViewReportTrips(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
         }
     }
+    
+
 
 }
