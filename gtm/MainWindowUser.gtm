@@ -1,6 +1,9 @@
 Window MainWindowUser {
     User caller //user
     String text := ['User Menu']
+    Label role_l{
+        String text := ['Role: '.concat($MainWindowUser.caller$.role.toString())]
+    }
     Button Info_B {
         String text := ['Account information']
         event onClick {
@@ -14,6 +17,16 @@ Window MainWindowUser {
                  open ViewListUser(caller:[$MainWindowUser.caller$], role:[$MainWindowUser.caller$.role])
         }
     }
+    Button Create_Trip_B {
+        String text := ['Create Trip']
+        event onClick {
+                if[$MainWindowUser.caller$.role = Role::USER_NORMAL]{
+                    notification([''], ['Action requires Premium User level'], [500])
+                }else{
+                    open ViewCreateTrip(caller:[$MainWindowUser.caller$], role:[$MainWindowUser.caller$.role])
+                 }
+         }
+    }
     Button Join_Trips_B{
         String text := ['Join Trip']
         event onClick{
@@ -25,6 +38,18 @@ Window MainWindowUser {
         String text := ['Report a User from a past Trip']
         event onClick{
             open ViewReportTrips(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
+        }
+    }
+    Button View_Zones_B{
+        String text := ['View all Zones']
+        event onClick{
+            open ViewZones(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
+        }
+    }
+    Button View_Locations_B{
+        String text := ['View Locations']
+        event onClick{
+            open ViewLocations(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
         }
     }
 

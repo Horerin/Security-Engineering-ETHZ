@@ -1,0 +1,93 @@
+Window ViewReports {
+    User caller
+
+    Table ListOfReports {
+        Set(Report) rows := [Report.allInstances()]
+        User Report := [null]
+        columns{
+            ['Reporter'] : Label name_usr {
+                                String text{
+                                    if[$text$.oclIsInvalid()]{
+                                        error := ['no permission']
+                                    }
+                                    else{
+                                        error := [null]
+                                    }
+                                }
+                                event onView (text){
+                                    text := [null]
+                                    try{
+                                        text := [$ListOfReports.row$.reporter.name.concat(' ').concat($ListOfReports.row$.reporter.surname)]
+                                    }catch(SecurityException){
+                                        text := ['***']
+                                    }
+                                }
+                    }
+            ['Reported'] : Label surname_usr {
+                            String text{
+                                if[$text$.oclIsInvalid()]{
+                                    error := ['no permission']
+                                }
+                                else{
+                                    error := [null]
+                                }
+                            }
+                            event onView (text){
+                                text := [null]
+                                try{
+                                    text := [$ListOfReports.row$.reported.name.concat(' ').concat($ListOfReports.row$.reported.surname)]
+                                }catch(SecurityException){
+                                    text := ['***']
+                                }
+                            }
+                }
+            ['Text'] : Label text_L {
+                            String text{
+                                if[$text$.oclIsInvalid()]{
+                                    error := ['no permission']
+                                }
+                                else{
+                                    error := [null]
+                                }
+                            }
+                            event onView (text){
+                                text := [null]
+                                try{
+                                    text := [$ListOfReports.row$.text]
+                                }catch(SecurityException){
+                                    text := ['***']
+                                }
+                            }
+                }
+            ['Trip Driver'] : Label trip_driver {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfReports.row$.trip.driver.name.concat(' ').concat($ListOfReports.row$.trip.driver.surname)]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }
+        }
+        
+    }
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                open MainWindowAdmin(caller:[$ViewReports.caller$], role:[$ViewReports.caller$.role])
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+}

@@ -40,7 +40,7 @@ Window LoginWindow {
                         if [not($loggedUser$.oclIsUndefined())] {
                                 if [$loggedUser$.role = Role::ADMIN]{
                                     //no distinction. Distinction is made in Data model
-                                    open MainWindowUser(caller:[$loggedUser$], role:[$loggedUser$.role])
+                                    open MainWindowAdmin(caller:[$loggedUser$], role:[$loggedUser$.role])
                                 }else{
                                     open MainWindowUser(caller:[$loggedUser$], role:[$loggedUser$.role])
                                 }
@@ -159,29 +159,33 @@ Window LoginWindow {
         
         //a trip in sarganserland (one zone)
         trip_dummy := new Trip
-        //[$trip_dummy$.date] := [LocalDateTime.now()]
+        [$trip_dummy$.date] := [LocalDateTime.now()] 
         [$trip_dummy$.price] := [31.415]
         [$trip_dummy$.trip_path] += [$loc_dummy$]
         [$trip_dummy$.trip_path] += [$loc_dummy2$]
         [$trip_dummy$.driver] := [$user_dummy2$] //he's premium
+        [$trip_dummy$.passenger] += [$user_dummy2$]
         [$trip_dummy$.passenger] += [$user_dummy$]
+
 
         //a trip in zurich (one zone)
         trip_dummy2 := new Trip
-        //[$trip_dummy2$.date] := [LocalDateTime.now()]
+        [$trip_dummy2$.date] := [LocalDateTime.parse("2016-12-03T10:15:30")] 
         [$trip_dummy2$.price] := [10000] //zurich is expencive
         [$trip_dummy2$.trip_path] += [$loc_dummy3$]
         [$trip_dummy2$.trip_path] += [$loc_dummy4$]
         [$trip_dummy2$.driver] := [$user_dummy4$] //he's premium
+        [$trip_dummy2$.passenger] += [$user_dummy4$]
         [$trip_dummy2$.passenger] += [$user_dummy3$]
 
         //a trip zurich sarganserland (two zones)
         trip_dummy3 := new Trip
-       // [$trip_dummy3$.date] := [LocalDateTime.now()]
+        [$trip_dummy3$.date] := [LocalDateTime.parse("2016-12-03T10:15:30")]
         [$trip_dummy3$.price] := [131.415] //zurich is expencive
         [$trip_dummy3$.trip_path] += [$loc_dummy$]
         [$trip_dummy3$.trip_path] += [$loc_dummy4$]
         [$trip_dummy3$.driver] := [$user_dummy2$] //he's premium
+        [$trip_dummy3$.passenger] += [$user_dummy2$]
         notification(['Message'],['The application data has been reset to the initial scenario'],[2000])
         }
         

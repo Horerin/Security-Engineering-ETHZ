@@ -1,0 +1,89 @@
+Window ViewLocations{
+    User caller
+    String text := ['View Locations']
+   
+    Table ListOfLocations {
+        Set(Location) rows := [Location.allInstances()]
+        Location selected := [null]
+        columns {
+            ['Location Name'] : Label Loc_Name {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.location_name]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+            ['X Coordinate'] : Label X_Label {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.x]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+            ['Y Coordinate'] : Label Y_Label {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.y]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+        }
+    }
+
+    
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                if[$ViewLocations.caller$.role = Role::ADMIN]{
+                    open MainWindowAdmin(caller:[$ViewLocations.caller$], role:[$ViewLocations.caller$.role])
+                }else{
+                    open MainWindowUser(caller:[$ViewLocations.caller$], role:[$ViewLocations.caller$.role])
+                    }
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+
+
+}

@@ -1,0 +1,137 @@
+Window ViewCreateTrip{
+    User caller
+    String text := ['Create Trip']
+    //2016-12-03T10:15:30
+    Label Date_L1 {
+        String text := ['Date of trip']
+    }
+    DateField Date_TF {
+        LocalDateTime value :=  [null] 
+    }
+    Label Price_L {
+        String text := ['Price of trip per passenger']
+    }   
+     TextField Price_TF {
+        String text :=  [null] 
+    }
+    Label Locations_L{
+        String text := ['Locations']
+    }
+    Table ListOfLocations {
+        Set(Location) rows := [Location.allInstances()]
+        Set(Location) selected := [null]
+        columns {
+            ['Name'] : Label LocName {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.location_name]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+
+           ['X_Coordinate'] : Label XCord {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.x]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           ['Y-Coordinate'] : Label ycord {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfLocations.row$.y]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           
+        }
+    }
+    Button Create_trip_B{
+        String text := ['Create Trip']
+        event onClick {
+            if[$Date_TF.value$.oclIsUndefined()]{
+                 notification([''], ['No date specified '], [500])
+            }else{
+                if[$Price_TF.text$.oclIsUndefined()]{
+                     notification([''], ['No price specified '], [500])
+                }else{
+                    if[($ViewCreateTrip.ListOfLocations.selected$ = null) or ($ViewCreateTrip.ListOfLocations.selected$->size() < 1)]{
+                         notification([''], ['No locations specified '], [500])
+                    }else{
+                    try{ 
+                        trip_new := new Trip
+                        //2016-12-03T10:15:30
+                        [$trip_new$.driver] := [$ViewCreateTrip.caller$]
+                        [$trip_new$.date] :=  [$Date_TF.value$] //only day matters, hours minutes and seconds dont 
+                        [$trip_new$.price] := [$Price_TF.text$.toReal()]
+                        foreach newVal in [$ListOfLocations.selected$]{
+                            [$trip_new$.trip_path] += [$newVal$]
+                        }
+                       
+                        [$trip_new$.passenger] += [$ViewCreateTrip.caller$]
+                        [$ViewCreateTrip.caller$.trips] += [$trip_new$]
+                             notification([''], ['Trip created!'], [500])
+                         }catch(SecurityException){
+                            notification([''], ['Cannot create Trip'], [500])
+                        }
+                    }
+                
+                }
+            }
+        }
+    }
+
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                if[$ViewCreateTrip.caller$.role = Role::ADMIN]{
+                    open MainWindowAdmin(caller:[$ViewCreateTrip.caller$], role:[$ViewCreateTrip.caller$.role])
+                }else{
+                    open MainWindowUser(caller:[$ViewCreateTrip.caller$], role:[$ViewCreateTrip.caller$.role])
+                    }
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+
+
+}

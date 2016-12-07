@@ -6,6 +6,7 @@ entity User {
     Zone userzone
     Set(Trip) trips oppositeTo passenger
     Boolean isBanned
+    Set(Report) users_reported //the reports I have done (i am the reporter not the reported)
 }
 
 
@@ -20,9 +21,9 @@ entity Zone{
     String zone_name
     Set(Location) zone_locations oppositeTo location_zone
 }
-entity Trip{
-    String date 
-    Real price
+entity Trip{ 
+    LocalDateTime date 
+    Real price 
     Set(Location) trip_path
     User driver
     Set(User) passenger oppositeTo trips

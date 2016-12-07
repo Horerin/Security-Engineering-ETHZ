@@ -4,7 +4,7 @@ Window ViewReportTrips {
     Table ListOfTrips {
         Set(Trip) rows := [$ViewReportTrips.caller$.trips] 
         //We could set it to allInstances, but the user just wants to report
-        // people from its trips, not from all. So this way its easier for the user, more user friendly
+        // people from its trips, not from all of them. So this way its easier for the user, more user friendly
         Trip selected := [null]
         columns {
             ['Trip Date'] : Label triptime {
@@ -20,7 +20,7 @@ Window ViewReportTrips {
                 event onView (text) {
                     text := [null]
                     try{
-                        text := [$ListOfTrips.row$.date]
+                        text := [$ListOfTrips.row$.date.toString()]
                     }catch(SecurityException){
                         text := ['***']
                     }

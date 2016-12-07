@@ -18,7 +18,7 @@ Window ViewJoinableTrips {
                 event onView (text) {
                     text := [null]
                     try{
-                        text := [$ListOfTrips.row$.date]
+                        text := [$ListOfTrips.row$.date.toString()]
                     }catch(SecurityException){
                         text := ['***']
                     }
@@ -139,8 +139,12 @@ Window ViewJoinableTrips {
         String text := ['Go Back']
         event onClick {
             try{
-                open MainWindowUser(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role])
-            }catch(SecurityException){
+                 if[$ViewJoinableTrips.caller$.role = Role::ADMIN]{
+                    open MainWindowAdmin(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role])
+                }else{
+                    open MainWindowUser(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role])
+                    }
+                }catch(SecurityException){
                     notification(['Error'],['Cannot perform action'],[500])
              }
         }

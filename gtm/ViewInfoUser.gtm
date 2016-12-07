@@ -29,7 +29,7 @@ Window ViewInfoUser{
                 event onView (text) {
                     text := [null]
                     try{
-                        text := [$ListOfTrips.row$.date]
+                        text := [$ListOfTrips.row$.date.toString()]
                     }catch(SecurityException){
                         text := ['***']
                     }
@@ -133,11 +133,81 @@ Window ViewInfoUser{
                 }
         }
     }
+
+    Table ListOfReports {
+        Set(Report) rows := [$ViewInfoUser.caller$.users_reported->asSet()]
+        Report selected := [null]
+        columns {
+            ['Reported'] : Label reported_name {
+                String error := [null]
+                String text {
+                    if [$text$.oclIsInvalid()] {
+                        error := ['no permission']
+                    }
+                    else {
+                        error := [null]
+                    }
+                }
+                event onView (text) {
+                    text := [null]
+                    try{
+                        text := [$ListOfReports.row$.reported.name.concat(' ').concat($ListOfReports.row$.reported.surname)]
+                    }catch(SecurityException){
+                        text := ['***']
+                    }
+                    
+                }
+            }
+
+           ['Description'] : Label description {
+                String text{
+                    if[$text$.oclIsInvalid()]{
+                        error := ['no permission']
+                    }
+                    else{
+                        error := [null]
+                    }
+                }
+                event onView (text){
+                    text := [null]
+                    try{
+                        text := [$ListOfReports.row$.text]
+                    }catch(SecurityException){
+                        text := ['****']
+                    }
+                }
+           
+           }
+           
+            ['Driver of Trip'] : Label drivername {
+                            String text{
+                                if[$text$.oclIsInvalid()]{
+                                    error := ['no permission']
+                                }
+                                else{
+                                    error := [null]
+                                }
+                            }
+                            event onView (text){
+                                text := [null]
+                                try{
+                                    text := [$ListOfReports.row$.trip.driver.name.concat(' ').concat($ListOfReports.row$.trip.driver.surname)]
+                                }catch(SecurityException){
+                                    text := ['***']
+                                }
+                            }
+                }
+        }
+    }
     Button go_back_B{
         String text := ['Go Back']
         event onClick {
             try{
-                open MainWindowUser(caller:[$ViewInfoUser.caller$], role:[$ViewInfoUser.caller$.role])
+                if[$ViewInfoUser.caller$.role = Role::ADMIN]{
+                    open MainWindowAdmin(caller:[$ViewInfoUser.caller$], role:[$ViewInfoUser.caller$.role])
+                }else{
+                    open MainWindowUser(caller:[$ViewInfoUser.caller$], role:[$ViewInfoUser.caller$.role])
+                    }
             }catch(SecurityException){
                     notification(['Error'],['Cannot perform action'],[500])
              }

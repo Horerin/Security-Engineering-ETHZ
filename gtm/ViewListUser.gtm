@@ -140,7 +140,11 @@ Window ViewListUser{
         String text := ['Go Back']
         event onClick {
             try{
-                open MainWindowUser(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role])
+                if[$ViewListUser.caller$.role = Role::ADMIN]{
+                    open MainWindowAdmin(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role])
+                }else{
+                    open MainWindowUser(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role])
+                }
             }catch(SecurityException){
                     notification(['Error'],['Cannot perform action'],[500])
              }

@@ -31,7 +31,7 @@ Window ViewUpdateUser{
                 event onView (text) {
                     text := [null]
                     try{
-                        text := [$ListOfTrips.row$.date]
+                        text := [$ListOfTrips.row$.date.toString()]
                     }catch(SecurityException){
                         text := ['***']
                     }

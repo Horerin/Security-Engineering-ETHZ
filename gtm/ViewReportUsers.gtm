@@ -2,7 +2,9 @@ Window ViewReportUsers {
     User caller
     Trip subject
 
-
+    Label Driver_L {
+        String text := ['Driver was: '.concat($ViewReportUsers.subject$.driver.name).concat(' ').concat($ViewReportUsers.subject$.driver.surname)]
+    }
     Table ListOfUsers {
         Set(User) rows := [$ViewReportUsers.subject$.passenger]
         User selected := [null]
@@ -128,17 +130,23 @@ Window ViewReportUsers {
     Button Report_User_B{
         String text := ['Report User']
         event onClick {
-            try{
-                 if [$Report_TF.text$.oclIsUndefined()] {
-                    notification([''], ['No text specified '], [500])
-                 }else{
-                    report := new Report
-                    [$report$.reporter] := [$ViewReportUsers.caller$]
-                    [$report$.reported] := [$ListOfUsers.selected$]
-                    [$report$.text] := [$Report_TF.text$]
-                    [$report$.trip] := [$ViewReportUsers.subject$]
+            try{   
+                if [$ListOfUsers.selected$.oclIsUndefined()]{
+                    notification([''],['No user selected'],[500])
+                    }else{
+                        if [$Report_TF.text$.oclIsUndefined()] {
+                           notification([''], ['No text specified '], [500])
+                        }else{
+                           report := new Report
+                           [$report$.reporter] := [$ViewReportUsers.caller$]
+                           [$report$.reported] := [$ListOfUsers.selected$]
+                           [$report$.text] := [$Report_TF.text$]
+                           [$report$.trip] := [$ViewReportUsers.subject$]
+                           
+                           [$ViewReportUsers.caller$.users_reported] += [$report$]
+                           notification([''],['User succesfully reported'],[500])
                     }
-                
+                 }
 
             }catch(SecurityException){
                  notification(['Error'],['Cannot perform action'],[500])

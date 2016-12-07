@@ -23,7 +23,10 @@ role USER_NORMAL {
            read(userzone) constrainedBy[self = caller] 
            read(name)
            read(trips) constrainedBy[self = caller] 
+           add(trips) constrainedBy[self = caller]
            read(isBanned) constrainedBy[self = caller]
+           add(users_reported) constrainedBy [(self = caller) and (target.reported.trips->exists(m | m.passenger->includes(self)))]
+           read(users_reported) constrainedBy[self = caller]
         }
         Location{
             read
@@ -36,7 +39,12 @@ role USER_NORMAL {
             add(passenger) constrainedBy [target = caller and self.trip_path->forAll(v | v.location_zone->includes(caller.userzone))]
         }
         Report{
-            fullAccess
+            create
+            update(reporter) constrainedBy [value = caller]
+            update(reported) constrainedBy [caller = self.reporter and caller.trips->exists(u | u.passenger->includes(value))]
+            update(text) constrainedBy [caller = self.reporter]
+            update(trip) constrainedBy [caller = self.reporter]
+            read constrainedBy [self.reporter = caller]
         }
 }
 role USER_PREMIUM {
@@ -48,13 +56,16 @@ role USER_PREMIUM {
            read(password) constrainedBy[self = caller]
            read(userzone) constrainedBy[self = caller]
            read(trips) constrainedBy[self = caller]
+           add(trips) constrainedBy[self = caller]
            read(isBanned) constrainedBy[self = caller]
+           add(users_reported) constrainedBy [(self = caller) and (target.reported.trips->exists(m | m.passenger->includes(self)))]
+           read(users_reported) constrainedBy [self = caller]
         }
         Location{
-            fullAccess
+            read
         }
         Zone{
-            fullAccess
+            read
         }
         Trip{
             //can READ iff the trip passes in a location that belongs
@@ -64,23 +75,30 @@ role USER_PREMIUM {
             or 
             self.trip_path->forAll(z | z.location_zone->exists(y | y.zone_locations->exists(x | x.location_zone->exists(f | f = caller.userzone))))]
 
+            create
+            update(driver) constrainedBy [value = caller] //only if i created it
+            update(date) constrainedBy[self.driver = caller]    //only if im driver
+            update(price) constrainedBy[self.driver = caller] //only if im driver
+
+            
             //can JOIN a trip (add himself), iff at least one ot the locations in the trip belongs to the user's zone
             add(passenger) constrainedBy[target = caller and self.trip_path->exists(v | v.location_zone->includes(caller.userzone))]
 
             //can CREATE new trip iff all locations with the trip are:
             //EITHER belong to the user's zone
             //OR blong to zones that the user visited before in other trips
-            //TODO
-            create
+            
             add(trip_path) constrainedBy [caller.userzone.zone_locations.asSet()->includes(target)
             or
             caller.trips->exists(z | z.trip_path->includes(target))]
         }
         Report{
-            //can report misbehaviour of a user with respect a trip iff shared the trip with the user (driver/pax)
-            //TODO
-            fullAccess
-
+            create
+            update(reporter) constrainedBy [value = caller]
+            update(reported) constrainedBy [caller = self.reporter and caller.trips->exists(u | u.passenger->includes(value))]
+            update(text) constrainedBy [caller = self.reporter]
+            update(trip) constrainedBy [caller = self.reporter]
+            read constrainedBy [self.reporter = caller]
         }
 }
 role ADMIN{

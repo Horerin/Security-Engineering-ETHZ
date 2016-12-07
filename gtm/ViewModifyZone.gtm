@@ -1,0 +1,39 @@
+Window ViewModifyZone {
+    User caller
+    Zone subject
+    String text := ['Add Locations to Zone']
+    Label Name_L {
+        String text := ['Location Name: '.concat($ViewModifyZone.subject$.zone_name)]
+    }
+    ComboBox ZoneCB {
+        Set(Location) rows := [Location.allInstances()]
+        Label zoneNameLab {
+            String text := [$ZoneCB.row$.location_name]
+        }
+    }
+    Button Modify_B {
+        String text := ['Modify Location']
+        event onClick {
+            try{
+              [$ViewModifyZone.subject$.zone_locations] += [$ViewModifyZone.ZoneCB.selected$]
+              [$ViewModifyZone.ZoneCB.selected$.location_zone] += [$ViewModifyZone.subject$]
+              notification([''], ['Location Created Succesfully'], [500])
+            }catch(SecurityException){
+                notification([''], ['Cannot create location'], [500])
+            }
+                            
+          } 
+    }
+
+   Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                open MainWindowAdmin(caller:[$ViewModifyZone.caller$], role:[$ViewModifyZone.caller$.role])
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+    
+}

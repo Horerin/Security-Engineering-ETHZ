@@ -1,0 +1,68 @@
+Window ViewCreateLocation {
+    User caller
+    String text := ['Create Location']
+    Label Name_L {
+        String text := ['Location Name']
+    }
+    TextField Name_TF {
+        String text :=  [null] 
+    }
+    Label X_L {
+        String text := ['X Coordinate']
+    }
+    TextField X_TF {
+        String text :=  [null] 
+    }
+    Label Y_L{
+        String text := ['Y Coordinate']
+    }
+    TextField Y_TF{
+        String text := [null]
+    }
+    ComboBox ZoneCB {
+        Set(Zone) rows := [Zone.allInstances()]
+        Label zoneNameLab {
+            String text := [$ZoneCB.row$.zone_name]
+        }
+    }
+    Button Create_B {
+        String text := ['Create Location']
+        event onClick {
+                 if [$Name_TF.text$.oclIsUndefined()] {
+                    notification([''], ['No name specified '], [500])
+                 }else{
+                    if [$X_TF.text$.oclIsUndefined()] {
+                         notification([''], ['No X axis specified '], [500])
+                    }else{
+                        if [$Y_TF.text$.oclIsUndefined()] {
+                            notification([''], ['No Y axis specified'], [500])
+                        }else{
+                          try{
+                            locat := new Location
+                            [$locat$.location_name] := [$Name_TF.text$]
+                            [$locat$.x] := [$X_TF.text$]
+                            [$locat$.y] := [$Y_TF.text$]
+                            [$locat$.location_zone] += [$ViewCreateLocation.ZoneCB.selected$]
+                            notification([''], ['Location Created Succesfully'], [500])
+                        }catch(SecurityException){
+                          notification([''], ['Cannot create location'], [500])
+                        }
+                            
+                        }
+                    }
+                 }
+        }
+    }
+
+   Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                open MainWindowAdmin(caller:[$ViewCreateLocation.caller$], role:[$ViewCreateLocation.caller$.role])
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+    
+}
