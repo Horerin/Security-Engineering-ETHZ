@@ -1,0 +1,216 @@
+Window LocationsZones{
+    User caller
+    
+    //Initial info
+    String text := ['Table of Zones']
+    //String text := ['To select Locations select Zone']
+Label zone_L{
+       String text := ['List of Zones']
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //set main table
+    Table ListOfZones {
+        Set(Zone) rows := [Zone.allInstances()]
+        Zone selected := [null]
+        
+        columns {
+            ['Zone'] : Label zone_name {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfZones.row$.zone_name]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }//Zone
+
+            ['Num of Locations'] : Label loc_num {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfZones.row$.zone_locations->size().toString()]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }//Number
+        }//columns
+
+    }//Table ListOfZones
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Button add_zone_B {
+    String text := ['Add new zone']
+    event onClick {
+        try{
+            open AddZone(caller:[$LocationsZones.caller$], role:[$LocationsZones.caller$.role])
+        }catch(SecurityException){
+            notification(['Error'],['Cannot perform action'],[500])
+        }
+    }
+}//Buttom add_zone_B
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Button modify_zone_B {
+    String text := ['Modify zone']
+    event onClick {
+        try{
+            if[$ListOfZones.selected$.oclIsUndefined()]{
+                notification(['Error'],['Please select one zone first'],[500])
+            }else{
+                open ModifyZone(caller:[$LocationsZones.caller$], role:[$LocationsZones.caller$.role], subject:[$ListOfZones.selected$])
+            }
+        }catch(SecurityException){
+            notification(['Error'],['Cannot perform action'],[500])
+        }
+    }
+}//Buttom modify_zone_B
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Button extend_zone_B {
+    String text := ['Assign locations to selected zone']
+    event onClick {
+        try{
+            if[$ListOfZones.selected$.oclIsUndefined()]{
+                 notification(['Error'],['Please select one zone first'],[500])
+            }else{
+            open ExtendZone(caller:[$LocationsZones.caller$], role:[$LocationsZones.caller$.role], subject:[$ListOfZones.selected$])
+            }
+        }catch(SecurityException){
+            notification(['Error'],['Cannot perform action'],[500])
+        }
+    }
+}//Buttom extend_zone_B
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Label loc_L{
+       String text := ['List of locations']
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Table ListOfLocations {
+        Set(Location) rows := [Location.allInstances()]
+        Location selected := [null]
+        columns {
+
+            ['Coordinate Y'] : Label location_y {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfLocations.row$.y]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }// Column 'Coordinate Y'
+
+            ['Coordinate X'] : Label location_x {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfLocations.row$.x]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }// Column 'Coordinate X'
+
+
+            ['Location Name'] : Label location_name {
+                       String text{
+                           if[$text$.oclIsInvalid()]{
+                               error := ['no permission']
+                           }
+                           else{
+                               error := [null]
+                           }
+                       }
+                       event onView (text){
+                           text := [null]
+                           try{
+                               text := [$ListOfLocations.row$.location_name]
+                           }catch(SecurityException){
+                               text := ['***']
+                           }
+                        }
+                 }// Column 'Zone'               
+        }//columns
+
+    }//Table ListOfLocations
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button add_location_B {
+        String text := ['Add new location']
+        event onClick {
+            try{
+                
+                open AddLocation(caller:[$LocationsZones.caller$], role:[$LocationsZones.caller$.role])
+            }catch(SecurityException){
+                notification(['Error'],['Cannot perform action'],[500])
+            }
+        }
+    }//Buttom add_location_B
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Button modify_location_B {
+    String text := ['Modify location']
+    event onClick {
+        try{
+            if[$ListOfLocations.selected$.oclIsUndefined()]{
+                notification(['Error'],['Please select one zone first'],[500])
+            }else{
+                open ModifyLocation(caller:[$LocationsZones.caller$], role:[$LocationsZones.caller$.role], subject:[$ListOfLocations.selected$])
+            }
+        }catch(SecurityException){
+            notification(['Error'],['Cannot perform action'],[500])
+        }
+    }
+}//Buttom modify_zone_B
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                 if[$LocationsZones.caller$.role = Role::ADMIN]{
+                    open MainWindowAdmin(caller:[$LocationsZones.caller$], role:[$LocationsZones.caller$.role])
+                }else{
+                     open MainWindowUser(caller:[$LocationsZones.caller$], role:[$LocationsZones.caller$.role])    
+                    }
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+}

@@ -9,6 +9,13 @@ Window ViewInfoUser{
     Label is_banned_L {
         String text := ['Banned status: '.concat($ViewInfoUser.caller$.isBanned.toString())]
     }   
+    Label Role_L {
+      String text := ['Role: '.concat($ViewInfoUser.caller$.role.toString())]
+    }   
+    Label UserZone_L {
+      String text := ['User zone: '.concat($ViewInfoUser.caller$.userzone.zone_name)]
+    } 
+    
     Label Trips_L{
         String text := ['Trips taken:']
     }

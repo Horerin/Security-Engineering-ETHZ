@@ -1,0 +1,65 @@
+Window AddZone {
+    String text := ['Add new zone']
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Label Zone_Name {
+        String text := ['Enter the name of new zone']
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    TextField Zone_Name_F {
+        String text := [null]
+    }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button Add_B {
+        String text := ['Add new zone']
+        
+        event onClick{ //try to create new zone
+            //Check name field
+            if [$Zone_Name_F.text$.oclIsUndefined()] {
+                Zone_Name_F.error := ['Error']
+            } else {
+                Zone_Name_F.error := [null]
+            }
+            
+            
+            //try to create new zone. The first check that fields were fullfielded properly
+            if [$Zone_Name_F.error$ = null] {           
+                //check that the Zone with the same name doen not exist
+                
+                try {
+                    if [Zone.allInstances()->forAll(z|z.zone_name <> $Zone_Name_F.text$)] {
+                        addZone := new Zone
+                        [$addZone$.zone_name] := [$Zone_Name_F.text$]
+                        notification(['Success'],['New Zone has been created'],[1000])
+                        open ExtendZone(caller:[$AddZone.caller$], role:[$AddZone.caller$.role], subject:[$addZone$])
+                    }
+                    else { notification(['Warning'],['The Zone with the same name already exists'],[1000]) }
+
+                }//try
+                catch (SecurityException) {
+                        notification(["Security error"], ["You cannot create zones"], [1500])
+                }
+
+
+            }
+            else {
+                notification(['Error'],['The form contains errors. Please, check the form.'],[500]) 
+            }
+
+
+        }//onClick
+    }//button Add_B
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                open LocationsZones(caller:[$AddZone.caller$], role:[$AddZone.caller$.role])
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+}

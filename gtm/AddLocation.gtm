@@ -1,0 +1,113 @@
+Window AddLocation{
+    String text := ['Add new location']
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Label Loc_Name {
+        String text := ['Enter the name of new location']
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    TextField Loc_Name_F {
+        String text := [null]
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Label Loc_X {
+        String text := ['Enter the coordinate X of new location']
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    TextField Loc_X_F {
+        String text := [null]
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Label Loc_Y {
+        String text := ['Enter the coordinate Y of new location']
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    TextField Loc_Y_F {
+        String text := [null]
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Label LabInfo_X {
+        String text := ['Modify zones associated with Location']
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ComboBox ZoneAss {
+        String text := ['Select a zone to assign']
+        Set(Zone) rows := [Zone.allInstances()]
+
+        Zone selected
+
+        Label zoneName_L {
+            String text := [$AddLocation.ZoneAss.row$.zone_name]
+        }
+    }//ZoneASS
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button Add_B {
+        String text := ['Add new location']
+        
+        event onClick{ //try to create new Location
+            //Check name field
+            if [$Loc_Name_F.text$.oclIsUndefined()] {
+                Loc_Name_F.error := ['Error']
+            } else {
+                Loc_Name_F.error := [null]
+            }
+            
+            //Check X field
+            if [$Loc_X_F.text$.oclIsUndefined()] {
+                Loc_X_F.error := ['Error']
+            } else {
+                Loc_X_F.error := [null]
+            }
+            
+
+            //Check Y field
+            if [$Loc_Y_F.text$.oclIsUndefined()] {
+                Loc_Y_F.error := ['Error']
+            } else {
+                Loc_Y_F.error := [null]
+            }
+            
+            //try to create new location. The first check that fields were fullfielded properly
+            if [$Loc_Name_F.error$ = null and $Loc_X_F.error$ = null and $Loc_Y_F.error$ = null] {           
+                //check that the location with the same zone doen not exist
+                
+                try {
+                    if [Location.allInstances()->forAll(l|l.location_name <> $Loc_Name_F.text$)] {
+                        addloc := new Location
+                        [$addloc$.location_name] := [$Loc_Name_F.text$]
+                        [$addloc$.x] := [$Loc_X_F.text$]
+                        [$addloc$.y] := [$Loc_Y_F.text$]
+                        if [$AddLocation.ZoneAss.selected$ <> null] {
+                            [$addloc$.location_zone] += [$AddLocation.ZoneAss.selected$]
+                        }
+                    }
+                    else { notification(['Warning'],['The Location with the same name already exists'],[1000]) }
+                    notification(['Success'],['New Location has been created'],[1000])
+                }//try
+                catch (SecurityException) {
+                        notification(["Security error"], ["You cannot create locations"], [1500])
+                }
+
+
+            }
+            else {
+                notification(['Error'],['The form contains errors. Please, check the form.'],[500]) 
+            }
+
+
+        }//onClick
+    }//button Add_B
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                open LocationsZones(caller:[$AddLocation.caller$], role:[$AddLocation.caller$.role])
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+}

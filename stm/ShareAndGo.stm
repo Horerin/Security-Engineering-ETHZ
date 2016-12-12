@@ -1,4 +1,4 @@
-role SYSTEM{
+ role SYSTEM{
         User{
            fullAccess
         }
@@ -71,23 +71,23 @@ role USER_PREMIUM {
             //can READ iff the trip passes in a location that belongs
             //EITHER to the user's zone
             //OR to a zone overlapping with the user's zone
-            read constrainedBy [self.trip_path->exists(m | m.location_zone->includes(caller.userzone))
-            or 
-            self.trip_path->forAll(z | z.location_zone->exists(y | y.zone_locations->exists(x | x.location_zone->exists(f | f = caller.userzone))))]
-
-            create
-            update(driver) constrainedBy [value = caller] //only if i created it
-            update(date) constrainedBy[self.driver = caller]    //only if im driver
-            update(price) constrainedBy[self.driver = caller] //only if im driver
-
+            //TODO doublecheck
+            
+           
+            read constrainedBy  [self.trip_path->forAll(z | z.location_zone->exists(y | (y = caller.userzone) 
+                                  or (y.zone_locations->exists(x | x.location_zone->exists( f | f = caller.userzone)))))]
             
             //can JOIN a trip (add himself), iff at least one ot the locations in the trip belongs to the user's zone
             add(passenger) constrainedBy[target = caller and self.trip_path->exists(v | v.location_zone->includes(caller.userzone))]
 
+            
+            create
+            update(driver) constrainedBy [value = caller] //only if i created it
+            update(date) constrainedBy[self.driver = caller]    //only if im driver
+            update(price) constrainedBy[self.driver = caller] //only if im driver
             //can CREATE new trip iff all locations with the trip are:
             //EITHER belong to the user's zone
             //OR blong to zones that the user visited before in other trips
-            
             add(trip_path) constrainedBy [caller.userzone.zone_locations.asSet()->includes(target)
             or
             caller.trips->exists(z | z.trip_path->includes(target))]
@@ -103,9 +103,24 @@ role USER_PREMIUM {
 }
 role ADMIN{
         User{
-           update(role) constrainedBy[self.trips->select(t | Report.allInstances()->select(v1| v1.trip = t and v1.reported = self)->isEmpty())->size() >= 4]
-           update(isBanned) constrainedBy [((self.role = Role::USER_NORMAL) implies (Report.allInstances()->select(v | v.reported = self)->size() >= 2))  or  ((self.role = Role::USER_PREMIUM) implies (Report.allInstances()->select(v | v.reported = self)->size() >= 5))]
-           read
+            //TODO test
+//           update(role) constrainedBy[(self.isBanned <> true) and (
+//             (value = Role::USER_BANNED and (
+//                    ((self.role = Role::USER_NORMAL) and (Report.allInstances()->select(v | v.reported = self)->size() >= 2))  
+//                    or
+//                    ((self.role = Role::USER_PREMIUM) and (Report.allInstances()->select(v | v.reported = self)->size() >= 5))))
+//             or ((value = Role::USER_PREMIUM) and (self.trips->select(t | Report.allInstances()->select(v1| v1.trip = t and v1.reported = self)->isEmpty())->size() >= 4)))]
+           
+           update(role) constrainedBy[((self.isBanned <> true) and 
+                                     (value = Role::USER_BANNED and (
+                                        ((self.role = Role::USER_NORMAL) and (Report.allInstances()->select(v | v.reported = self)->size() >= 2))  
+                                       or
+                                        ((self.role = Role::USER_PREMIUM) and (Report.allInstances()->select(v | v.reported = self)->size() >= 5))))
+                                  ) or ( (self.isBanned <> true) and (((value = Role::USER_PREMIUM) and (self.trips->select(t | Report.allInstances()->select(v1| v1.trip = t and v1.reported = self)->isEmpty())->size() >= 4)))) ]
+           
+
+           update(isBanned) constrainedBy [(value = true) and ((self.role = Role::USER_NORMAL) implies (Report.allInstances()->select(v | v.reported = self)->size() >= 2))  or  ((self.role = Role::USER_PREMIUM) implies (Report.allInstances()->select(v | v.reported = self)->size() >= 5))]
+           read //read info about all users
            //((self.role = Role::USER_NORMAL) implies (Report.allInstances()->select(v | v.reported = self)->size >= 2))  or ((self.role = Role::USER_PREMIUM) implies (Report.allInstances()->select(v | v.reported = self)->size >= 5))
         }
         Location{
@@ -134,4 +149,19 @@ role ADMIN{
 }
 
 role USER_BANNED{
+        User{
+
+        }
+        Location{
+            
+        }
+        Zone{
+            
+        }
+        Trip{
+            
+        }
+        Report{
+
+        }
 }

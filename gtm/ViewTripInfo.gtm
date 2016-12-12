@@ -1,18 +1,11 @@
 Window ViewTripInfo{
     User caller
-    Trip subject
-    String text := ['Trip Info']
+    Set(Location) subject
 
-    Label Trip_Cost {
-        String text := ['Cost: '.concat($ViewTripInfo.subject$.price.toString())]
-    }
-    
-    Label Trip_Driver{
-        String text := ['Driver: '.concat($ViewTripInfo.subject$.driver.name).concat(' ').concat($ViewTripInfo.subject$.driver.surname)]
-    }
+
 
     Table ListOfLocations {
-        Set(Location) rows := [$ViewTripInfo.subject$.trip_path]
+        Set(Location) rows := [$ViewTripInfo.subject$]
         Location selected := [null]
         columns {
             ['Location Name'] : Label triptime {
@@ -75,28 +68,19 @@ Window ViewTripInfo{
            }
         }
     }
-
-    Button Join_Trip_B{
-        String text := ['Join Trip']
-        event onClick{
+    
+ Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
             try{
-                [$ViewTripInfo.caller$.trips] += [$ViewTripInfo.subject$]
-                [$ViewTripInfo.subject$.passenger] += [$ViewTripInfo.caller$]
-           
-            }catch(SecurityException){
-                       notification(['Error'],['Cannot perform action'],[500])
-            }
+                
+                open ViewJoinableTrips(caller:[$ViewTripInfo.caller$], role:[$ViewTripInfo.caller$.role])
+              
+                }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
         }
     }
-    Button go_back_B{
-            String text := ['Go Back']
-            event onClick {
-                try{
-                    open ViewJoinableTrips(caller:[$ViewTripInfo.caller$], role:[$ViewTripInfo.caller$.role])
-                }catch(SecurityException){
-                        notification(['Error'],['Cannot perform action'],[500])
-                 }
-            }
-        }
+    
 
 }

@@ -10,7 +10,11 @@ Window ViewUpdateUser{
     }
     Label is_banned_L {
         String text := ['Banned status: '.concat($ViewUpdateUser.subject$.isBanned.toString())]
+       
     }   
+    Label Role_L{
+        String text := ['Role: '.concat($ViewUpdateUser.subject$.role.toString())]
+    }
     Label Trips_L{
         String text := ['Trips taken:']
     }
@@ -176,7 +180,7 @@ Window ViewUpdateUser{
                 event onView (text) {
                     text := [null]
                     try{
-                        text := [$ListOfReports.row$.reporter.surname.concat(' ').concat($ListOfReports.row$.reporter.name)]
+                        text := [$ListOfReports.row$.trip.price.toString()]
                     }catch(SecurityException){
                         text := ['***']
                     }
@@ -231,8 +235,26 @@ Window ViewUpdateUser{
         event onClick {
                  try{
                     [$ViewUpdateUser.subject$.role] := [Role::USER_PREMIUM]
+                    reevaluate ViewUpdateUser.Role_L.text
+                    notification([''],['User succesfully upgraded'],[500])
                   }catch(SecurityException){
                     notification(['Error'],['You do not have privileges or conditions not satisfied to upgrade'],[500])
+                }
+        }
+    }
+    
+    Button ban_user_b{
+        String text := ['Ban User']
+        event onClick {
+                 try{
+                    
+                    [$ViewUpdateUser.subject$.role] := [Role::USER_BANNED]
+                    [$ViewUpdateUser.subject$.isBanned] := [true]
+                    reevaluate ViewUpdateUser.is_banned_L.text
+                    reevaluate ViewUpdateUser.Role_L.text
+                    notification([''],['User succesfully Banned'],[500])
+                  }catch(SecurityException){
+                    notification(['Error'],['You do not have privileges or conditions not satisfied to ban user'],[500])
                 }
         }
     }
@@ -241,7 +263,12 @@ Window ViewUpdateUser{
             String text := ['Go Back']
             event onClick {
                 try{
+                if[$ViewUpdateUser.caller$.role = Role::ADMIN]{
+                    open ViewListUserAdmin(caller:[$ViewUpdateUser.caller$], role:[$ViewUpdateUser.caller$.role])
+                }else{
                     open ViewListUser(caller:[$ViewUpdateUser.caller$], role:[$ViewUpdateUser.caller$.role])
+                    }
+                    
                 }catch(SecurityException){
                         notification(['Error'],['Cannot perform action'],[500])
                  }

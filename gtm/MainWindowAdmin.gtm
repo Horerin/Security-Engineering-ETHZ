@@ -11,7 +11,7 @@ Window MainWindowAdmin {
      Button Users_B {
         String text := ['Users information']
         event onClick {
-                 open ViewListUser(caller:[$MainWindowAdmin.caller$], role:[$MainWindowAdmin.caller$.role])
+                 open ViewListUserAdmin(caller:[$MainWindowAdmin.caller$], role:[$MainWindowAdmin.caller$.role])
         }
     }
     Button Join_Trips_B{
@@ -28,29 +28,10 @@ Window MainWindowAdmin {
         }
     }
     
-    Button Create_Locations{
-        String text := ['Create Locations']
+    Button Locations_B {
+        String text := ['Locations & Zones']
         event onClick{
-            open ViewCreateLocation(caller:[$MainWindowAdmin.caller$],role:[$MainWindowAdmin.caller$.role])
-        }
-    }
-    Button Create_Zones{
-        String text := ['Create Zones']
-        event onClick{
-            open ViewCreateZone(caller:[$MainWindowAdmin.caller$],role:[$MainWindowAdmin.caller$.role])
-        }
-    }
-    
-    Button View_Zones{
-        String text := ['View Zones']
-        event onClick{
-            open ViewZones(caller:[$MainWindowAdmin.caller$],role:[$MainWindowAdmin.caller$.role])
-        }
-    }
-    Button View_Locations{
-        String text := ['View Locations']
-        event onClick{
-            open ViewLocations(caller:[$MainWindowAdmin.caller$],role:[$MainWindowAdmin.caller$.role])
+            open LocationsZones(caller:[$MainWindowAdmin.caller$],role:[$MainWindowAdmin.caller$.role])
         }
     }
     

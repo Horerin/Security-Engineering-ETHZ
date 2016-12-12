@@ -28,7 +28,7 @@ Window MainWindowUser {
          }
     }
     Button Join_Trips_B{
-        String text := ['Join Trip']
+        String text := ['Trips']
         event onClick{
             open ViewJoinableTrips(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
         }
@@ -40,16 +40,10 @@ Window MainWindowUser {
             open ViewReportTrips(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
         }
     }
-    Button View_Zones_B{
-        String text := ['View all Zones']
+    Button Locations_B {
+        String text := ['Locations & Zones']
         event onClick{
-            open ViewZones(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
-        }
-    }
-    Button View_Locations_B{
-        String text := ['View Locations']
-        event onClick{
-            open ViewLocations(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
+            open LocationsZones(caller:[$MainWindowUser.caller$],role:[$MainWindowUser.caller$.role])
         }
     }
 

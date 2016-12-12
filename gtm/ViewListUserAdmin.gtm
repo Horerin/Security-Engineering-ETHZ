@@ -1,4 +1,4 @@
-Window ViewListUser{
+Window ViewListUserAdmin{
     User caller
     String text := ['User List']
        
@@ -121,14 +121,29 @@ Window ViewListUser{
         }
         
     }
+    Button ModifyUser_B{
+        String text := ['User actions']
+        event onClick {
+            try{
+                if[$ListOfUsers.selected$ = null]{
+                    notification(['Error'],['Please select a user first'],[500])
+                }else{
+                    open ViewUpdateUser(caller:[$ViewListUserAdmin.caller$], role:[$ViewListUserAdmin.caller$.role], subject:[$ListOfUsers.selected$])
+            }
+             }catch(SecurityException){
+               notification(['Error'],['Cannot perform action'],[500])
+            }
+        }
+    
+    }
     Button go_back_B{
         String text := ['Go Back']
         event onClick {
             try{
-                if[$ViewListUser.caller$.role = Role::ADMIN]{
-                    open MainWindowAdmin(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role])
+                if[$ViewListUserAdmin.caller$.role = Role::ADMIN]{
+                    open MainWindowAdmin(caller:[$ViewListUserAdmin.caller$], role:[$ViewListUserAdmin.caller$.role])
                 }else{
-                    open MainWindowUser(caller:[$ViewListUser.caller$], role:[$ViewListUser.caller$.role])
+                    open MainWindowUser(caller:[$ViewListUserAdmin.caller$], role:[$ViewListUserAdmin.caller$.role])
                 }
             }catch(SecurityException){
                     notification(['Error'],['Cannot perform action'],[500])

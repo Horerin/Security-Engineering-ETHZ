@@ -122,17 +122,40 @@ Window ViewJoinableTrips {
                 }
         }
     }
-
-    Button JoinTrip_B{
-        String text := ['View Trip']
+    
+     Button ViewTrip_B{
+        String text := ['View Locations of Trip']
+        Set(Location) setval
         event onClick {
                     try{
-                        open ViewTripInfo(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role],subject:[$ListOfTrips.selected$])
+                        if[$ViewJoinableTrips.ListOfTrips.selected$ = null]{
+                            notification(['Error'],['Please select a trip'],[500])
+                        }else{
+                        setval := [$ViewJoinableTrips.ListOfTrips.selected$.trip_path]
+                        open ViewTripInfo(caller:[$ViewJoinableTrips.caller$], role:[$ViewJoinableTrips.caller$.role],subject:[$setval$])
+                        
+                    }   
+                    }catch(SecurityException){
+                         notification(['Error'],['Cannot access trip'],[500])
+                    }
+        }
+    }
+    Button JoinTrip_B{
+        String text := ['Join Trip']
+        event onClick {
+                    try{
+                        if[$ViewJoinableTrips.ListOfTrips.selected$ = null]{
+                            notification(['Error'],['Please select a trip'],[500])
+                        }else{
+                        [$ViewJoinableTrips.caller$.trips] += [$ViewJoinableTrips.ListOfTrips.selected$]
+                        [$ViewJoinableTrips.ListOfTrips.selected$.passenger] += [$ViewJoinableTrips.caller$]
+                        notification([''],['Trip Succesfully Joined!'],[500])
+                        }
+                        //check if selected, and try catch it
                      
                     }catch(SecurityException){
                          notification(['Error'],['Cannot perform action'],[500])
                     }
-                 
         }
     }
     Button go_back_B{

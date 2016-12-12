@@ -1,0 +1,58 @@
+Window ModifyZone {
+    String text := ['Modify zone']
+    Zone subject
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Label Zone_Name {
+        String text := ['Change name of zone']
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    TextField Zone_Name_F {
+        String text := [$ModifyZone.subject$.zone_name]
+    }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button Modify_B {
+        String text := ['Modify zone']
+        
+        event onClick{ //try to create new zone
+            //Check name field
+            if [$Zone_Name_F.text$.oclIsUndefined()] {
+                Zone_Name_F.error := ['Error']
+            } else {
+                Zone_Name_F.error := [null]
+            }
+            //try to create new zone. The first check that fields were fullfielded properly
+            if [$Zone_Name_F.error$ = null] {           
+                //check that the Zone with the same name doen not exist
+                try {
+                    [$ModifyZone.subject$.zone_name] := [$Zone_Name_F.text$]
+                    notification(['Success'],['Zone has been updated'],[1000])
+                    open ExtendZone(caller:[$ModifyZone.caller$], role:[$ModifyZone.caller$.role], subject:[$ModifyZone.subject$])
+                }//try
+                catch (SecurityException) {
+                        notification(["Security error"], ["You cannot create zones"], [1500])
+                }
+
+
+            }
+            else {
+                notification(['Error'],['The form contains errors. Please, check the form.'],[500]) 
+            }
+
+
+        }//onClick
+    }//button Add_B
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Button go_back_B{
+        String text := ['Go Back']
+        event onClick {
+            try{
+                open LocationsZones(caller:[$ModifyZone.caller$], role:[$ModifyZone.caller$.role])
+            }catch(SecurityException){
+                    notification(['Error'],['Cannot perform action'],[500])
+             }
+        }
+    }
+}
